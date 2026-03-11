@@ -48,6 +48,8 @@ static inference_t inference;
 static signed short sampleBuffer[2048];
 static bool debug_nn = false; // Set this to true to see e.g. features generated from the raw signal
 static bool reading = false;
+int threshold = 2000;
+String inputString = "";
 /**
  * @brief      Arduino setup function
  */
@@ -78,8 +80,6 @@ void setup()
         return;
     }
 }
-int threshold = 2000; 
-String inputString = "";
 
 /**
  * @brief      Arduino main function. Runs the inferencing loop.
@@ -87,21 +87,22 @@ String inputString = "";
 void loop()
 {
     //ei_printf("Starting inferencing in 2 seconds...\n");
-    if(Serial.available() > 0)
-    {
-        char c = Serial.read();
-        if(c == '\n')
-        {
-            threshold = inputString.toInt();
-            Serial.print("Novi threshold: ");
-            Serial.print(threshold);
-            inputString = "";
-        }else {
-            inputString+=c;
-        }
-    }
-    delay(threshold);
 
+if (Serial.available() > 0) {
+    char c = Serial.read();
+
+    if (c == '\n') {
+        threshold = inputString.toInt();
+        Serial.print("Novi threshold: ");
+        Serial.println(threshold);
+        inputString = "";
+    } 
+    else {
+        inputString += c;
+    }
+}
+
+delay(threshold);
     ei_printf("Recording...\n");
 
     bool m = microphone_inference_record();
