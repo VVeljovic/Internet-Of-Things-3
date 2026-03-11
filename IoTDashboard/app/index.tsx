@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { io } from 'socket.io-client';
 
@@ -18,6 +18,24 @@ const App = () => {
   const [data, setData] = useState<Data[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const toastOpacity = useRef(new Animated.Value(0)).current;
+  const [vremeOcitavanja, setVremeOcitavanja] = useState('');
+  const [anomalija, setAnomalija] = useState('');
+
+  const posaljiVreme = () => {
+    fetch(`${SERVER}/set-threshold`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ threshold: vremeOcitavanja }),
+    }).catch(console.error);
+  };
+
+  const posaljiAnomaliju = () => {
+    fetch(`${SERVER}/set-anomaly`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ anomaly: anomalija }),
+    }).catch(console.error);
+  };
 
   const showToast = (message: string) => {
     setToast(message);
@@ -68,6 +86,39 @@ const App = () => {
         </Animated.View>
       )}
 
+      <View style={styles.inputRow}>
+        <Text style={styles.label}>Vreme očitavanja (ms)</Text>
+        <View style={styles.inputGroup}>
+          <TextInput
+            style={styles.input}
+            value={vremeOcitavanja}
+            onChangeText={setVremeOcitavanja}
+            keyboardType="numeric"
+            placeholder="npr. 2000"
+            placeholderTextColor="#aaa"
+          />
+          <TouchableOpacity style={styles.button} onPress={posaljiVreme}>
+            <Text style={styles.buttonText}>Postavi</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.inputRow}>
+        <Text style={styles.label}>Anomalija</Text>
+        <View style={styles.inputGroup}>
+          <TextInput
+            style={styles.input}
+            value={anomalija}
+            onChangeText={setAnomalija}
+            placeholder="unesite anomaliju"
+            placeholderTextColor="#aaa"
+          />
+          <TouchableOpacity style={styles.button} onPress={posaljiAnomaliju}>
+            <Text style={styles.buttonText}>Postavi</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <View style={styles.chartContainer}>
         <BarChart
           data={chartData}
@@ -117,6 +168,41 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   toastText: {
+    color: '#232B5D',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  inputRow: {
+    marginBottom: 12,
+  },
+  label: {
+    color: 'white',
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  inputGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#1a2147',
+    color: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: '#4ECDC4',
+  },
+  button: {
+    backgroundColor: '#4ECDC4',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  buttonText: {
     color: '#232B5D',
     fontWeight: 'bold',
     fontSize: 13,
