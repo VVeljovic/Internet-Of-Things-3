@@ -1,0 +1,5 @@
+npx create-expo-app IotDashboard
+
+npm run reset-project 
+
+SHIFT ALT F formatting
