@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 from influxdb import InfluxDBClient
 import paho.mqtt.client as mqtt
-import serial
 
 
 app = Flask(__name__)
@@ -18,9 +17,6 @@ influxClient = InfluxDBClient(
 	database='iotdb'
 )
 
-arduinoSerial = serial.Serial('COM5', 115200, timeout=1)
-print("Arduino na portu: COM5")
-
 def on_connect(client,userdata,flags,rc):
 	print("Connected with code:", rc)
 	client.subscribe("notification")
@@ -29,11 +25,11 @@ def on_connect(client,userdata,flags,rc):
 def set_threshold():
 	data = request.get_json()
 	threshold = data.get("threshold")
-	if arduinoSerial and threshold is not None:
-		arduinoSerial.write(f"{threshold}\n".encode())
+	if threshold is not None:
+		mqttClient.publish("configuration", str(threshold))
 		print("Poslat threshold:", threshold)
 		return jsonify({"status": "ok", "threshold": threshold})
-	return jsonify({"status": "error", "message": "Arduino nije povezan ili threshold nije prosleđen"}), 400
+	return jsonify({"status": "error", "message": "Threshold nije prosleđen"}), 400
 
 @app.route("/set-anomaly", methods=['POST'])
 def set_anomaly():

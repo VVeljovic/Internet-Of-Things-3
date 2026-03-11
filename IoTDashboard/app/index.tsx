@@ -3,7 +3,7 @@ import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'r
 import { BarChart } from 'react-native-gifted-charts';
 import { io } from 'socket.io-client';
 
-const SERVER = 'http://192.168.1.4:5000';
+const SERVER = 'http://192.168.1.9:5000';
 
 interface Data {
   x: number;
@@ -56,8 +56,8 @@ const App = () => {
 
     socket.on('connect', () => console.log('Socket connected'));
 
-    socket.on('new-data', (incoming: string) => {
-      showToast(`Novo obaveštenje: ${incoming}`);
+    socket.on('new-data', (incoming: { data: string }) => {
+      showToast(`Novo obaveštenje: ${incoming.data}`);
     });
 
     return () => { socket.disconnect(); };
