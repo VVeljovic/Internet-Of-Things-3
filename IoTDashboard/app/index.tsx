@@ -21,7 +21,7 @@ const App = () => {
   const [vremeOcitavanja, setVremeOcitavanja] = useState('');
   const [anomalija, setAnomalija] = useState('');
 
-  const posaljiVreme = () => {
+  const sendTime = () => {
     fetch(`${SERVER}/set-threshold`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -29,7 +29,7 @@ const App = () => {
     }).catch(console.error);
   };
 
-  const posaljiAnomaliju = () => {
+  const sendAnomaly = () => {
     fetch(`${SERVER}/set-anomaly`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -97,7 +97,7 @@ const App = () => {
             placeholder="npr. 2000"
             placeholderTextColor="#aaa"
           />
-          <TouchableOpacity style={styles.button} onPress={posaljiVreme}>
+          <TouchableOpacity style={styles.button} onPress={sendTime}>
             <Text style={styles.buttonText}>Postavi</Text>
           </TouchableOpacity>
         </View>
@@ -113,7 +113,7 @@ const App = () => {
             placeholder="unesite anomaliju"
             placeholderTextColor="#aaa"
           />
-          <TouchableOpacity style={styles.button} onPress={posaljiAnomaliju}>
+          <TouchableOpacity style={styles.button} onPress={sendAnomaly}>
             <Text style={styles.buttonText}>Postavi</Text>
           </TouchableOpacity>
         </View>
