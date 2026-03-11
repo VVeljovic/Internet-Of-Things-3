@@ -56,8 +56,9 @@ const App = () => {
 
     socket.on('connect', () => console.log('Socket connected'));
 
-    socket.on('new-data', (incoming: string) => {
-      showToast(`Novo obaveštenje: ${incoming}`);
+    socket.on('new-data', (incoming: { data: string } | string) => {
+      const msg = typeof incoming === 'object' ? incoming.data : incoming;
+      showToast(`Novo obaveštenje: ${msg}`);
     });
 
     return () => { socket.disconnect(); };
